@@ -73,3 +73,34 @@ func TestInterfacesFilter(t* testing.T) {
 		}
 	}
 }
+
+type interface_reduce_test struct {
+	source      []interface{}
+	destination, identity interface{}
+	reducer     InterfacesReducer
+}
+
+var interface_reduce_tests = []interface_reduce_test{
+	{
+		[]interface{}{5,2,34,56,12,39,47,54,34,4},
+		2,
+		5,
+		func (a, b interface{}) interface{} { if a.(int) < b.(int) { return a } else { return b } },
+	},
+	{
+		[]interface{}{5,2,34,56,12,39,47,54,34,4},
+		56,
+		5,
+		func (a, b interface{}) interface{} { if a.(int) > b.(int) { return a } else { return b } },
+	},
+}
+
+func TestInterfaceReduce(t *testing.T) {
+	for _, v := range interface_reduce_tests {
+		interfaces := NewFromSlice(v.source)
+		out := interfaces.Reduce(v.identity, v.reducer)
+		if out != v.destination {
+			t.Errorf("Got %v, expected %v", out, v.destination)
+		}
+	}
+}
