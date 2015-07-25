@@ -2,6 +2,7 @@ package collections
 
 type InterfacesMapper func (value interface{}) (interface{})
 type InterfacesFilter func (value interface{}) (bool)
+type InterfacesReducer func (a, b interface{}) (interface{})
 
 type Interfaces struct {
 	values []interface{}
@@ -30,4 +31,13 @@ func (this *Interfaces) Filter(filter InterfacesFilter) (*Interfaces) {
 		}
 	}
 	return &Interfaces{ values: new_ }
+}
+
+func (this *Interfaces) Reduce(identity interface{}, reducer InterfacesReducer) (interface{}) {
+	res := identity
+	for _, v := range this.values {
+		res = reducer(res, v)
+	}
+
+	return res
 }
